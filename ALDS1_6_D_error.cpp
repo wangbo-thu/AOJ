@@ -17,29 +17,29 @@ int main()
 		w_sorted[w[i]]++;
 	}
 	
-	int w_min = MAXW;	
 	int w_cnt = 0;
 	for (int i = 0; i < w_sorted.size(); i++) {
-		w_min = min(w_min, w[i]);
 		if (w_sorted[i] >= 0) {
 			w_sorted[i] += w_cnt;
 			w_cnt++;
 		}
 	}
 
+	int w_min = MAXW;
+	// int w_max = -1;
 	int w_sum = 0;
-
+	int w_cnt1 = 0;
 	for (int i = 0; i < n; i++) {
-		int w_cnt1 = 0;
-		int w_min_partial = MAXW;
-		for (int j = i; w_sorted[w[j]] != -1; j = w_sorted[w[j]], w_sorted[w[j]] = -1) {
-			w_min_partial = min(w_min_partial, w[j]);
-			w_cnt1++;
-			w_sum += w[j];
+		if (w_sorted[w[i]] != i) {
+			w_sum += w[i];
+			w_min = min(w_min, w[i]);
+			// w_max = max(w_max, w[i]);
+			int tmp = w[w_sorted[w[i]]];
+			if (w[w_sorted[tmp]] != w[i])
+				w_cnt1++;
 		}
-		w_sum += min((w_cnt1 - 2) * w_min_partial, (w_cnt1 - 2) * w_min + 2 * (w_min_partial + w_min));
 	}
-
+	int res = w_sum + w_min * max(w_cnt1 - 2, 0);
 	cout << res << endl;
 	return 0;
 }
