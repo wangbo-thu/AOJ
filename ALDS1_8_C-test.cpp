@@ -99,7 +99,7 @@ void del(TreeNode *tree, int num) {
         }
     }
     if (!found) return;
-    if (pos->lchild == NULL && pos->rchild == NULL) {
+    if (pos->lchild == NULL && pos->rchild == NULL) { // 叶子节点
         if (root == pos) {
             root = NULL;
         }
@@ -129,17 +129,14 @@ void del(TreeNode *tree, int num) {
             p->lchild = pos->lchild;
         }
         else {
-            // p->rchild = pos->rchild;
-            // 错将l写成r，折腾了多长时间，叹
-            p->rchild = pos->lchild;
-
+            p->rchild = pos->rchild;
         }
     }
     else {
         TreeNode* lc = pos->lchild;
         TreeNode* rc = pos->rchild;
-        TreeNode *rmin = rc;
-        TreeNode *rminP = pos;
+        TreeNode* rmin = rc;
+        TreeNode* rminP = pos;
         if (root == pos) {
             if (!rmin->lchild) {
                 rmin->lchild = lc;
@@ -194,8 +191,8 @@ void del(TreeNode *tree, int num) {
 
 int main()
 {
-//    freopen("in3.txt", "r", stdin);
-//    freopen("out3.txt", "w", stdout);
+    freopen("in3.txt", "r", stdin);
+    freopen("out3.txt", "w", stdout);
     int n;
     cin >> n;
     string cmd;
@@ -206,7 +203,12 @@ int main()
         if (cmd == "insert") {
             cin >> num;
             TreeNode *node = new TreeNode(num);
+            if (num == 865) {
+                num = 865;
+            }
             insert(root, node);
+            cout << "insert " << num << endl;
+            print(root);
         }
         if (cmd == "find") {
             cin >> num;
@@ -214,7 +216,9 @@ int main()
         }
         if (cmd == "delete") {
             cin >> num;
+            cout << "delete " << num << endl;
             del(root, num);
+            print(root);
         }
         if (cmd == "print")
             print(root);
