@@ -5,31 +5,23 @@
 #include <vector>
 using namespace std;
 
-bool isFriend(vector<vector<int>> &sns, vector<int> &arrived, int x, int y)
+void dfs(vector<vector<int>> &sns, vector<int> &arrived, int x, int y)
 {
-    for (int i = 0; i < sns[x].size(); i++) {
-        if (sns[x][i] == y) return true;
-    }
-
-    bool res = false;
-    arrived[x] = 1;
+    if (arrived[y] != 0 && arrived[x] == 2) return;
+    arrived[x]++;
     for (int i = 0; i < sns[x].size(); i++) {
         int next = sns[x][i];
-        if (!arrived[next]) {
-            bool tmp = isFriend(sns, arrived, next, y);
-            if (tmp) {
-                res = true;
-                break;
-            }
+        if (arrived[next] == 0) {
+            dfs(sns, arrived, next, y);
         }
     }
-    return res;
+    arrived[x]++;
 }
 
 int main()
 {
-//    freopen("ALDS1_11_D_in20.txt", "r", stdin);
-//    freopen("out20.txt", "w", stdout);
+//    freopen("ALDS1_11_D_in22.txt", "r", stdin);
+//    freopen("out22.txt", "w", stdout);
     int m, n, q;
     cin >> n >> m;
     vector<vector<int> > sns(n, vector<int>());
@@ -44,8 +36,8 @@ int main()
     while (q--) {
         vector<int> arrived(n);
         cin >> x >> y;
-        bool res = isFriend(sns, arrived, x, y);
-        if (res) cout << "yes" << endl;
+        dfs(sns, arrived, x, y);
+        if (arrived[y]) cout << "yes" << endl;
         else cout << "no" << endl;
     }
     return 0;
