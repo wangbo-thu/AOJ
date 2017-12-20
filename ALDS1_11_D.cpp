@@ -7,12 +7,16 @@ using namespace std;
 
 bool isFriend(vector<vector<int>> &sns, vector<int> &arrived, int x, int y)
 {
-    if (sns[x][y] == 1) return true;
+    for (int i = 0; i < sns[x].size(); i++) {
+        if (sns[x][i] == y) return true;
+    }
+
     bool res = false;
     arrived[x] = 1;
-    for (int i = 0; i < sns.size(); i++) {
-        if (sns[x][i] == 1 && !arrived[i]) {
-            bool tmp = isFriend(sns, arrived, i, y);
+    for (int i = 0; i < sns[x].size(); i++) {
+        int next = sns[x][i];
+        if (!arrived[next]) {
+            bool tmp = isFriend(sns, arrived, next, y);
             if (tmp) {
                 res = true;
                 break;
@@ -24,14 +28,16 @@ bool isFriend(vector<vector<int>> &sns, vector<int> &arrived, int x, int y)
 
 int main()
 {
+//    freopen("ALDS1_11_D_in20.txt", "r", stdin);
+//    freopen("out20.txt", "w", stdout);
     int m, n, q;
     cin >> n >> m;
-    vector<vector<int> > sns(n, vector<int>(n, 0));
+    vector<vector<int> > sns(n, vector<int>());
     int x, y;
     for (int i = 0; i < m; i++) {
         cin >> x >> y;
-        sns[x][y] = 1;
-        sns[y][x] = 1;
+        sns[x].push_back(y);
+        sns[y].push_back(x);
     }
 
     cin >> q;
