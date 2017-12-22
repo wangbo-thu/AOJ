@@ -12,32 +12,43 @@ struct Node {
     Node(int v, int c): v(v), c(c) {}
 };
 
-static const int maxN = 100;
+const int maxN = 100;
 static const int WHITE = 0;
 static const int GRAY = 1;
 static const int BLACK = 2;
-//static const int INF = 100001;
+static const int INF = (1<<21);
 vector<Node> G[maxN];
-vector<int> dist(maxN, 0);
+vector<int> dist(maxN, INF);
+vector<int> p(maxN);
 vector<int> color(maxN, WHITE);
 int n;
-
-void solve(int x)
+int cnt = 0;
+void dijkstra(int x)
 {
-    if (color[x] == BLACK) return;
-    color[x] = GRAY;
-    for (int i = 0; i < G[x].size(); i++) {
-        int v = G[x][i].v;
-        int c = G[x][i].c;
-        if (dist[v] == 0 && color[v] == WHITE)
-            dist[v] = dist[x] + c;
-        else
-            dist[v] = min(dist[v], dist[x] + c);
-        if (color[v] == WHITE) {
-            solve(v);
+    dist[x] = 0;
+    p[x] = -1;
+    while(++cnt != n) {
+        int u = 0;
+        int mindist = INF;
+        for (int i = 0; i < n; i++) {
+            if (color[i] != BLACK && dist[i] < mindist) {
+                mindist = dist[i];
+                u = i;
+            }
         }
+
+        for (int i = 0; i < G[u].size(); i++) {
+            if (color[u] == BLACK) continue;
+            int v = G[u][i].v;
+            int c = G[u][i].c;
+            if (dist[u] + c < dist[v]) {
+                dist[v] = dist[u] + c;
+                p[v] = u;
+                color[v] = GRAY;
+            }
+        }
+        color[u] = BLACK;
     }
-    color[x] = BLACK;
 }
 
 int main()
@@ -52,7 +63,7 @@ int main()
             G[i].push_back(Node(v, c));
         }
     }
-    solve(0);
+    dijkstra(0);
     for (int i = 0; i < n; i++) {
         printf("%d %d\n", i, dist[i]);
     }
