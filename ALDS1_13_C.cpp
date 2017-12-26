@@ -1,10 +1,9 @@
 // ALDS1_13_C.cpp
 // Heuristic Search - 15 Puzzle
-// 通过26个测试用例
+// AC
 
 #include <iostream>
 #include <vector>
-#include <map>
 #include <algorithm>
 using namespace std;
 
@@ -28,7 +27,6 @@ struct Puzzle {
 static const int dx[4] = {-1, 0, 1, 0};
 static const int dy[4] = {0, -1, 0, 1};
 static const char dir[4] = {'u', 'l', 'd', 'r'};
-map<Puzzle, bool> ms;
 Puzzle in;
 int ministep = INF;
 int sx = 0;
@@ -67,23 +65,23 @@ int getAllMD(Puzzle p)
     return dist;
 }
 
-bool bfs(int i)
+bool bfs(int i, int prev)
 {
     if (isTarget(in)) {
         ministep = min(ministep, i);
 //        cout << "ministep = " << ministep << endl;
         return true;
     }
-    if (ms[in] || limit < i + getAllMD(in)) {
+    if (limit < i + getAllMD(in)) {
         return false;
     }
 
-    ms[in] = true;
     for (int u = 0; u < 4; u++) {
         int tx = sx + dx[u];
         int ty = sy + dy[u];
         if (tx < 0 || tx >= N || ty < 0 || ty >= N)
             continue;
+        if (max(prev, u) - min(prev, u) == 2) continue;
         swap(in.f[sx * N + sy], in.f[tx * N + ty]);
         sx = tx;
         sy = ty;
@@ -94,13 +92,12 @@ bool bfs(int i)
 //        cout << " " << in.f[j];
 //    cout << endl;
 //    cout << "MD: " << getAllMD(in) << endl;
-        if(bfs(i+1)) return true;
+        if(bfs(i+1, u)) return true;
         sx = sx - dx[u];
         sy = sy - dy[u];
         swap(in.f[sx * N + sy], in.f[tx * N + ty]);
         in.path.pop_back();
     }
-    ms[in] = false;
     return false;
 }
 
@@ -108,7 +105,7 @@ string iterative_deepening()
 {
     limit = getAllMD(in);
     for ( ; limit <= INF; limit++) {
-        if (bfs(0)) {
+        if (bfs(0, -100)) {
             return in.path;
         }
     }
