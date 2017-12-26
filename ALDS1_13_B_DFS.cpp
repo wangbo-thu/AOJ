@@ -1,5 +1,7 @@
 // ALDS1_13_B.cpp
 // Heuristic Search - 8 Puzzle
+// AC
+// 加了曼哈顿距离进行剪枝，顺利AC，但效率不高
 #include <iostream>
 #include <vector>
 #include <map>
@@ -8,7 +10,7 @@ using namespace std;
 
 const int N = 3;
 const int N2 = 9;
-const int INF = 50;
+const int INF = 40;
 struct Puzzle {
     int f[N2];
     //int space;
@@ -22,6 +24,7 @@ struct Puzzle {
         return false;
     }
 };
+
 static const int dx[4] = {-1, 0, 1, 0};
 static const int dy[4] = {0, -1, 0, 1};
 static const char dir[4] = {'u', 'l', 'd', 'r'};
@@ -30,6 +33,13 @@ Puzzle in;
 int ministep = INF;
 int sx = 0;
 int sy = 0;
+
+void swap(int& a, int& b)
+{
+    int t = a;
+    a = b;
+    b = t;
+}
 
 bool isTarget(Puzzle p)
 {
@@ -40,25 +50,33 @@ bool isTarget(Puzzle p)
     return true;
 }
 
-void swap(int& a, int& b)
+int getAllMD(Puzzle p)
 {
-    int t = a;
-    a = b;
-    b = t;
+    int dist = 0;
+    int x, y;
+    int ux, uy;
+    for (int i = 0; i < N2; i++) {
+        if (p.f[i] == N2) continue; // 不计0的点
+        x = (p.f[i] - 1) / N;
+        y = (p.f[i] - 1) % N;
+        ux = i / N;
+        uy = i % N;
+        dist += abs(x - ux) + abs(y - uy);
+    }
+    return dist;
 }
 
 void bfs(int i)
 {
     if (isTarget(in)) {
         ministep = min(ministep, i);
+//        cout << "ministep = " << ministep << endl;
         return;
     }
-    if (ms[in] || ministep < i) {
+    if (ms[in] || ministep < i + getAllMD(in)) {
         return;
     }
-
-    if (in.path == "ldrd")
-        int debug = 0;
+    
     ms[in] = true;
     for (int u = 0; u < 4; u++) {
         int tx = sx + dx[u];
@@ -69,6 +87,12 @@ void bfs(int i)
         sx = tx;
         sy = ty;
         in.path += dir[u];
+        /* test */
+//    cout << "(i = " << i << ") " << in.path << endl;
+//    for (int j = 0; j < N2; j++)
+//        cout << " " << in.f[j];
+//    cout << endl;
+//    cout << "MD: " << getAllMD(in) << endl;
         bfs(i+1);
         sx = sx - dx[u];
         sy = sy - dy[u];
@@ -80,8 +104,8 @@ void bfs(int i)
 
 int main()
 {
-    freopen("in.txt", "r", stdin);
-    freopen("out.txt", "w", stdout);
+//    freopen("in.txt", "r", stdin);
+//    freopen("out.txt", "w", stdout);
 
     for (int i = 0; i < N2; i++) {
         cin >> in.f[i];
