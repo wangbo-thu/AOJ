@@ -1,7 +1,7 @@
 // ALDS1_13_C.cpp
 // Heuristic Search - 15 Puzzle
 // AC
-
+// Refs: http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=2330363#1
 #include <iostream>
 #include <vector>
 #include <algorithm>
