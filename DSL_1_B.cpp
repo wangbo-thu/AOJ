@@ -1,5 +1,8 @@
 // DSL_2_B.cpp
 // Range Query - Range Sum Query
+// Refs:
+// http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=2128527#1
+// http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=1824167#1
 #include <iostream>
 #include <stack>
 #include <vector>
