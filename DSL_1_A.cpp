@@ -3,55 +3,65 @@
 
 #include <iostream>
 #include <vector>
+#include <cstdio>
 using namespace std;
-const int N = 10000 + 5;
-vector<int> id(N, -1);
-vector<int> sz(N, 1);
-int root(int x)
-{
-	while (x != id[x]) {
-		id[x] = id[id[x]];
-		x = id[x];
-	}
-	return x;
-}
 
-void same(int x, int y)
-{
-	if (root(x) == root(y)) {
-		cout << 1 << endl;
-	}
-	else cout << 0 << endl;
-}
+class UF {
+	public:
+		vector<int> id, rank;
+		UF() {}
+		UF(int size) {
+			id.resize(size, 0);
+			rank.resize(size, 0);
+			for (int i = 0; i < size; i++) {
+				id[i] = i;
+			}
+		}
+		
+		int root(int x) {
+			if (x != id[x]) {
+				id[x] = root(id[x]);
+			}
+			return id[x];
+		}
+		
+		void same(int x, int y)
+		{
+			if (root(x) == root(y)) {
+				printf("%d\n", 1);
+			}
+			else printf("%d\n", 0);
+		}
 
-void unite(int x, int y)
-{
-	int rx = root(x);
-	int ry = root(y);
-	if (rx == ry) return;
-	else if (sz[rx] < sz[ry]) {
-		id[rx] = ry;
-		sz[ry] += sz[rx];
-	}
-	else {
-		id[ry] = rx;
-		sz[rx] += sz[ry];
-	}
-}
+		void unite(int x, int y)
+		{
+			int rx = root(x);
+			int ry = root(y);
+			if (rx == ry) return;
+			if (rank[rx] <= rank[ry]) {
+				id[rx] = ry;
+				if (rank[rx] == rank[ry]) {
+					rank[ry]++;
+				}
+			}
+			else {
+				id[ry] = rx;
+			}
+		}
+};
+
 int main()
 {
 	int n, q;
 	cin >> n >> q;
-	for (int i = 0; i < n; i++) {
-		id[i] = i;
-	}
+	UF uf = UF(n);
 	int cmd, x, y;
 	while (q--) {
 		cin >> cmd >> x >> y;
 		if(cmd) {
-			same(x, y);
+			uf.same(x, y);
 		}
-		else unite(x, y);
+		else uf.unite(x, y);
 	}
 	return 0;
 }
